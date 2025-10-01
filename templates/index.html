@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!--Choc carrot ake-->
+<div class="container my-5">
+  <div class="row align-items-center bg-light rounded-4 shadow-lg overflow-hidden card-hover">
+
+    <!-- Cake Image -->
+    <div class="col-md-6 text-center p-4">
+      <img
+        src="{{ url_for('static', filename='images/choc_carrot_2.jpg') }}"
+        alt="Chocolate Carrot Cake"
+        class="img-fluid rounded-3"
+      >
+    </div>
+
+    <!-- Text Content -->
+    <div class="col-md-6 p-5">
+      <h2 class="display-5 fw-bold mb-3">Chocolate Carrot Cake</h2>
+      <p class="lead mb-4">
+        Moist layers of spiced carrot cake swirled with rich chocolate, finished in a way that feels both wholesome and decadent. It is the kind of cake that surprises you with comfort in one bite and pure indulgence in the next.
+      </p>
+
+      <!-- Buttons -->
+      <div class="d-flex flex-wrap gap-3">
+        <a href="#learn-more" class="btn btn-outline-dark btn-lg">Learn More</a>
+        <a href="#order" class="btn btn-pink btn-lg text-black">Order Now</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!--cookie box-->
+<div class="container my-5">
+  <div class="row align-items-center bg-light rounded-4 shadow-lg overflow-hidden card-hover">
+
+    <!-- Text Content -->
+    <div class="col-md-6 p-5">
+      <h2 class="display-5 fw-bold mb-3">Cookie Box</h2>
+      <p class="lead mb-4">
+        This one means business. Crafted with Dutch cocoa and packed with dark, milk, and white chocolate. Cookies that looks stunning and tastes even better.
+      </p>
+
+      <!-- Buttons -->
+      <div class="d-flex flex-wrap gap-3">
+        <a href="#learn-more" class="btn btn-outline-dark btn-lg">Learn More</a>
+        <a href="#order" class="btn btn-pink btn-lg text-black">Order Now</a>
+      </div>
+    </div>
+
+    <!-- Cookie Image -->
+    <div class="col-md-6 text-center p-4">
+      <img
+        src="{{ url_for('static', filename='images/cookies.jpg') }}"
+        alt="Caramel Pumpkin Cake Cookie"
+        class="img-fluid rounded-3"
+      >
+    </div>
+
+  </div>
+</div>
+
+<!--muffins-->
+<!--<div class="container my-5">-->
+<!--    <p style="font-family: 'Cinzel', serif; font-size:80px; color: #333;">Our Muffins</p>-->
+<!--</div>-->
+<div class="container my-5">
+  <div class="row align-items-center bg-light rounded-4 shadow-lg overflow-hidden card-hover">
+
+    <!-- Cookie Image -->
+    <div class="col-md-6 text-center p-4">
+      <img
+        src="{{ url_for('static', filename='images/oats.jpg') }}"
+        alt="Cinnamon Oats Muffin"
+        class="img-fluid rounded-3"
+      >
+    </div>
+
+    <!-- Text Content -->
+    <div class="col-md-6 p-5">
+      <h2 class="display-5 fw-bold mb-3">Cinnamon Oats Muffin</h2>
+      <p class="lead mb-4">
+        A tender muffin kissed with cinnamon and finished with golden oats. It is comfort baked into a perfect bite.
+      </p>
+
+      <!-- Buttons -->
+      <div class="d-flex flex-wrap gap-3">
+        <a href="#learn-more" class="btn btn-outline-dark btn-lg">Learn More</a>
+        <a href="#order" class="btn btn-pink btn-lg text-black">Order Now</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!--Cookies-->
+<div class="container my-5">
+  <div class="row align-items-center bg-light rounded-4 shadow-lg overflow-hidden card-hover">
+
+    <!-- Text Content -->
+    <div class="col-md-6 p-5">
+      <h2 class="display-5 fw-bold mb-3">Red Velvet Cookies</h2>
+      <p class="lead mb-4">
+        A bold red cookie with a hint of cocoa and a soft velvety bite. Balanced with creamy sweetness, it is both striking and unforgettable.
+      </p>
+
+      <!-- Buttons -->
+      <div class="d-flex flex-wrap gap-3">
+        <a href="#learn-more" class="btn btn-outline-dark btn-lg">Learn More</a>
+        <a href="#order" class="btn btn-pink btn-lg text-black" data-bs-toggle="modal" data-bs-target="#exampleModalCenter">Order Now</a>
+      </div>
+    </div>
+
+    <!-- Cookie Image -->
+    <div class="col-md-6 text-center p-4">
+      <img
+        src="{{ url_for('static', filename='images/red_velvet_cookies.jpg') }}"
+        alt="Caramel Pumpkin Cake Cookie"
+        class="img-fluid rounded-3"
+      >
+    </div>
+
+  </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content custom-modal">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalCenterTitle">Red Velvet Cookies</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Your content goes here...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
