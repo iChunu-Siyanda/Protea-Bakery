@@ -1,0 +1,27 @@
+{
+  "name": "proteabakes",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tailwindcss -i ./static/css/input.css -o ./static/css/output.css --watch",
+    "build": "tailwindcss -i ./static/css/input.css -o ./static/css/output.css"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iChunu-Siyanda/Protea-Bakery.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/iChunu-Siyanda/Protea-Bakery/issues"
+  },
+  "homepage": "https://github.com/iChunu-Siyanda/Protea-Bakery#readme",
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.14"
+  }
+}
