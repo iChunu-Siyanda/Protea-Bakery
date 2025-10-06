@@ -1,8 +1,174 @@
 {% extends "base.html" %}
 {% block content %}
 
+<div class="max-w-full mx-auto flex flex-col items-center justify-center">
+
+    <!-- Product Card -->
+    <div class="w-full max-w-5xl rounded-xl rounded-xl border flex justify-between mx-auto bg-white">
+        <div class="flex justify-start">
+            <div class="max-w-xl md:w-1/3 md:h-auto overflow-hidden sm:px-18">
+                <img src="{{ url_for('static', filename='images/choc_carrot_2.jpg') }}"
+                     alt="Chocolate Carrot Cake"
+                     class="h-28 w-auto object-cover rounded-l-xl">
+            </div>
+            <div class="px-3 flex flex-col items-center justify-center">
+                <p class="text-xl font-cinzel font-semibold text-gray-900">
+                    Chocolate Carrot Cake
+                </p>
+            </div>
+        </div>
+
+        <div class="md:w-1/3 flex items-center justify-around">
+            <div class="border rounded-full py-2 px-4 flex flex-col justify-center">
+                <p class="flex items-center gap-2 text-gray-700">
+                    <i class="fa-regular fa-user"></i> 8+
+                </p>
+            </div>
+
+            <div class="border rounded-full py-2 px-4 flex justify-between gap-3 text-xl product"
+                 data-product-id="20"
+                 data-product-name="Chocolate Carrot Cake"
+                 data-product-price="200">
+                <button class="minusBtn">-</button>
+                <p class="w-[20px] text-center quantity flex flex-col justify-center">0</p>
+                <button class="addBtn">+</button>
+            </div>
+
+            <div class="border rounded-full py-2 px-4 flex flex-col justify-center">
+                <p>R200</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Centered Total -->
+    <div class="border border-black rounded-xl flex justify-between items-center mt-4 p-2 w-[200px] mx-auto bg-white">
+        <span class="text-gray-700 font-medium">Total:</span>
+        <span id="cartTotalModal" class="text-xl font-bold text-black">R0</span>
+    </div>
+
+    <!-- Pickup Date -->
+    <div class="w-full max-w-5xl rounded-xl rounded-xl border flex flex-col justify-center mt-4 mx-auto bg-white type">
+        <!-- Delivery/Collect -->
+        <div class="flex flex-col items-center mt-4 type">
+            <div class="flex gap-3 justify-center">
+                <button class="deliveryBtn px-4 py-2 border border-black rounded-xl text-black bg-white transition-all duration-300">
+                    Delivery
+                </button>
+                <button class="collectBtn px-4 py-2 border border-black rounded-xl text-black bg-white transition-all duration-300">
+                    Collect
+                </button>
+            </div>
+
+            <p class="orderTypeMsg mt-3 text-lg font-medium text-center"></p>
+        </div>
 
 
+        <!-- Calendar -->
+        <div class="flex justify-center items-center w-full p-4">
 
+            <form id="bookingForm" method="POST" action="{{ url_for('bookings.create_booking') }}" class="text-right">
+<!--                <div id="calendar" class="mb-4"></div>-->
+                <!-- Date -->
+                <input type="date" name="date" id="date" class="border rounded-lg p-2 w-full md:w-64" min="{{ current_date }}" required>
+
+                <!-- Time slots -->
+                <select name="time" id="time" class="border rounded-lg p-2 w-full md:w-64 mb-4" required>
+                    <option value="" disabled selected>Select a time slot</option>
+                    <option value="10:00-12:00">10:00 AM - 12:00 PM</option>
+                    <option value="12:00-15:00">12:00 PM - 3:00 PM</option>
+                    <option value="15:00-17:00">3:00 PM - 5:00 PM</option>
+                </select>
+
+                <button type="submit" class="bg-black hover:bg-primary text-white font-bold py-2 px-4 rounded-lg">
+                    Confirm Booking
+                </button>
+            </form>
+
+            <!-- Success Modal -->
+            <div id="successModal" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-50">
+                <div class="bg-white p-6 rounded-2xl shadow-lg text-center w-96 animate-fadeIn">
+                    <h2 class="text-2xl font-bold text-green-600 mb-3">Booking Confirmed!</h2>
+                    <p class="text-gray-600 mb-4">Your pickup date has been booked successfully. We’ll prepare your order on time.</p>
+                    <button id="closeModal" class="bg-pink-400 hover:bg-pink-500 text-white px-4 py-2 rounded-lg">Okay</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
 
 {% endblock %}
+
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+<script>
+    const dateInput = document.getElementById('date');
+    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    dateInput.setAttribute('min', today);
+
+    document.querySelector("#bookingForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const form = e.target;
+
+        const formData = new FormData(form);
+        const response = await fetch(form.action, {
+            method: "POST",
+            body: formData
+        });
+
+        if (response.ok) {
+            document.querySelector("#successMessage").classList.remove("hidden");
+            form.reset();
+        }
+        else {
+            alert("Something went wrong. Please try again.");
+        }
+    });
+
+    //document.addEventListener('DOMContentLoaded', function() {
+        // Calendar setup
+       // const calendarEl = document.getElementById('calendar');
+        //if (calendarEl) {
+          // const calendar = new FullCalendar.Calendar(calendarEl, {
+           //   initialView: 'dayGridMonth',
+             // selectable: true,
+              //dateClick: function(info) {
+                //  document.getElementById('date').value = info.dateStr;
+              //}
+           //});
+           //calendar.render();
+        //}
+
+        // Booking form AJAX
+        //const form = document.getElementById('bookingForm');
+        //const modal = document.getElementById('successModal');
+        //const closeModal = document.getElementById('closeModal');
+
+        //if (form) {
+           // form.addEventListener('submit', async (e) => {
+                //e.preventDefault();
+
+               // const formData = new FormData(form);
+               // const response = await fetch(form.action, {
+                   // method: 'POST',
+                   // body: formData,
+                //});
+
+                //if (response.ok) {
+                   // modal.classList.remove('hidden');
+                    //modal.classList.add('flex');
+                    //form.reset();
+                //}
+                //else {
+                   // alert('Something went wrong. Please try again.');
+               // }
+           // });
+       // }
+
+        //if (closeModal) {
+           // closeModal.addEventListener('click', () => {
+                //modal.classList.add('hidden');
+                //modal.classList.remove('flex');
+            //});
+        //}
+    //});
+</script>

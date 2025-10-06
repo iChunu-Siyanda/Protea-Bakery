@@ -24,6 +24,7 @@
     <!-- Font Awesome CDN -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
     <title>{{ title }}</title>
+
 </head>
 <body class="bg-gray-50 pt-20">
 
@@ -58,14 +59,16 @@
                 </ul>
 
                 <!-- Cart Modal -->
-                <div id="cartModal" class="hidden fixed top-20 right-6 w-80 bg-white rounded-2xl shadow-2xl p-4 z-50 transform transition-all duration-500 ease-in-out">
+                <div id="cartModal" class="hidden fixed top-20 right-6 w-80 bg-white rounded-l-xl rounded-br-xl shadow-2xl p-4 z-50 transform transition-all duration-500 ease-in-out">
                     <p class="text-lg font-semibold text-gray-800 border-b pb-2">Your Cart </p>
                         <div id="cartItems" class="max-h-64 overflow-y-auto mt-2 space-y-3"></div>
                         <div class="border border-black rounded-xl flex justify-between items-center mt-4 p-2">
                             <span class="text-gray-700 font-medium">Total:</span>
                             <span id="cartTotalModal" class="text-xl font-bold text-black">R0</span>
                         </div>
-                    <button class="w-full mt-4 bg-black text-white py-2 rounded-xl hover:bg-primary transition">Checkout</button>
+                    <div class="flex justify-center">
+                        <a href="{{url_for('order')}}" class="w-full mt-4 bg-black text-white text-center py-2 rounded-xl hover:bg-primary transition">See Your Order</a>
+                    </div>
                 </div>
 
                 <!-- Mobile -->
@@ -101,104 +104,6 @@
     <main class="max-w-7xl mx-auto px-4 mt-10">
         {% block content %}
 
-        <!-- Card -->
-        <div class="max-w-5xl mx-auto my-10 bg-white rounded-3xl shadow-lg overflow-hidden flex flex-col md:flex-row transform transition-all duration-700 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:bg-orange-500 group">
-            <!-- Image -->
-            <div class="md:w-1/2 h-64 md:h-auto overflow-hidden">
-                <img src="{{ url_for('static', filename='images/choc_carrot_2.jpg') }}" alt="Chocolate Carrot Cake"
-                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-            </div>
-
-            <!-- Text -->
-            <div class="md:w-2/3 p-6 md:p-8 flex flex-col justify-center">
-                <h2 class="text-3xl md:text-5xl font-cinzel font-semibold mb-3 text-gray-900 transition-colors duration-700 ease-in-out group-hover:text-white">
-                    Chocolate Carrot Cake
-                </h2>
-                <p class="text-gray-700 text-base md:text-lg leading-relaxed mb-4 transition-colors duration-700 ease-in-out group-hover:text-white">
-                    Moist layers of spiced carrot cake swirled with rich chocolate, finished in a way that feels both wholesome and decadent.
-                </p>
-                <div class="flex flex-wrap gap-3">
-                    <button id="openModal" class="border border-gray-800 text-gray-800 px-4 py-2 rounded-full transition-colors duration-500 ease-in-out hover:bg-gray-100 hover:text-gray-900">
-                        Learn More
-                    </button>
-                    <button id="openModalOrder" class="bg-primary text-white px-4 py-2 rounded-full transition-colors duration-500 ease-in-out group-hover:bg-black group-hover:text-white">
-                        Order Now
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!--modal order now-->
-        <div id="popupModalOrder" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity z-50">
-
-            <div class="bg-white rounded-3xl max-h-[80vh] overflow-y-auto
-                        flex flex-col md:flex-row w-11/12 max-w-4xl relative
-                        transform scale-95 transition-transform duration-300">
-
-                <!-- Close Button -->
-                <button id="closeModalOrder"
-                        class="absolute top-4 right-4 text-gray-500 hover:text-gray-900 text-3xl font-bold">&times;
-                </button>
-
-                <!-- Left Side -->
-                <div class="md:w-1/2 h-64 md:h-auto overflow-hidden">
-                    <img src="{{ url_for('static', filename='images/choc_carrot_2.jpg') }}"
-                         alt="Chocolate Carrot Cake"
-                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-                </div>
-
-                <!-- Right Side -->
-                <div class="md:w-1/2 flex flex-col justify-between">
-                    <div class="flex flex-col gap-4 m-6">
-                        <h2 class="md:text-3xl font-cinzel font-semibold">Chocolate Carrot Cake</h2>
-                        <p class="text-gray-700">
-                            Detailed description, ingredients, baking process, or special offers go here.
-                        </p>
-
-                        <hr>
-
-                        <div class="flex justify-between">
-                            <p class="flex items-center gap-2 text-gray-700">
-                                <i class="fa-regular fa-user"></i> 8+
-                            </p>
-
-                            <div class="flex flex-col justify-center"><p>R200</p></div>
-
-                            <div class="flex justify-between gap-3 font-bold text-xl product" data-product-id="20" data-product-name="Chocolate Carrot Cake" data-product-price="200">
-                                <button class="minusBtn">-</button>
-                                    <p class="w-[20px] text-center quantity">0</p>
-                                <button class="addBtn" >+</button>
-                            </div>
-                        </div>
-
-                        <hr>
-                    </div>
-
-                    <a href="/order"
-                       class="bg-black text-white text-center m-6 py-3 rounded-full
-                              transition-colors duration-300 ease-in-out hover:bg-primary">
-                        Add To Cart
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <!--modal learn more-->
-        <div id="popupModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity z-50">
-            <div class="bg-white rounded-3xl max-h-[80vh] overflow-y-auto w-11/12 max-w-4xl p-6 relative transform scale-95 transition-transform duration-300">
-                <!-- Close Button -->
-                <button id="closeModal" class="absolute top-4 right-4 text-gray-500 hover:text-gray-900 text-2xl font-bold">&times;</button>
-
-                <!-- Modal Content -->
-                <h2 class="text-2xl font-semibold mb-4">Chocolate Carrot Cake</h2>
-                <p class="text-gray-700 mb-4">
-                    Detailed description, ingredients, baking process, or special offers go here.
-                </p>
-
-                <a href="/order" class="bg-black text-white px-4 py-2 rounded-full transition-colors duration-300 ease-in-out hover:bg-primary">Order Now</a>
-            </div>
-        </div>
-
         {% endblock %}
     </main>
 
@@ -208,7 +113,7 @@
             <p class="text-gray-500 text-sm">© 2025 Company, Inc</p>
 
             <a href="/" class="flex items-center justify-center">
-                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="w-30 h-auto">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="w-30 h-20">
             </a>
 
             <ul class="flex space-x-4">

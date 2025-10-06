@@ -7,6 +7,7 @@ let cart = {
 document.querySelectorAll(".product").forEach(product => {
     const addBtn = product.querySelector(".addBtn");
     const minusBtn = product.querySelector(".minusBtn");
+    const msg = document.getElementById("cartTotalMsg");
     const quantityEl = product.querySelector(".quantity");
     let quantity = parseInt(quantityEl.innerHTML);
 
@@ -29,6 +30,13 @@ document.querySelectorAll(".product").forEach(product => {
         // Update cart total
         cart.total = Object.values(cart.products).reduce((sum, p) => sum + p.Qty * p.price, 0);
 
+        if (cart.total) {
+            msg.innerHTML = `Amount is R${cart.total}`;
+            msg.classList.remove("hidden");
+        }
+        else {
+            msg.classList.add("hidden");
+        }
 
         console.log("Cart:", product.dataset.productName, cart);
     });
@@ -46,9 +54,52 @@ document.querySelectorAll(".product").forEach(product => {
 
         cart.total = Object.values(cart.products).reduce((sum, p) => sum + p.Qty * p.price, 0);
 
-        console.log("Cart:", cart.total);
+        if (cart.total) {
+            msg.innerHTML = `Amount is R${cart.total}`;
+            msg.classList.remove("hidden");
+        }
+        else {
+            msg.classList.add("hidden");
+        }
+
+         console.log("Cart:", cart.total);
     });
 });
+
+
+
+//=========================== Delivery/Collect Toggle ================================
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".type").forEach(type => {
+    const deliveryBtn = type.querySelector(".deliveryBtn");
+    const collectBtn = type.querySelector(".collectBtn");
+    const orderTypeMsg = type.querySelector(".orderTypeMsg");
+
+    if (!deliveryBtn || !collectBtn || !orderTypeMsg) return; // skip if missing
+
+    function setActiveButton(activeBtn) {
+      [deliveryBtn, collectBtn].forEach(btn => {
+        btn.classList.remove("bg-black", "text-white");
+        btn.classList.add("bg-white", "text-black");
+      });
+
+      activeBtn.classList.add("bg-black", "text-white");
+      activeBtn.classList.remove("bg-white", "text-black");
+    }
+
+    deliveryBtn.addEventListener("click", () => {
+      setActiveButton(deliveryBtn);
+      orderTypeMsg.innerHTML = "When do you want your order to be delivered?";
+    });
+
+    collectBtn.addEventListener("click", () => {
+      setActiveButton(collectBtn);
+      orderTypeMsg.innerHTML = "When do you want to collect your order?";
+    });
+  });
+});
+
+
 
 
 
