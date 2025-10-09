@@ -1,7 +1,7 @@
-from flask import Flask, render_template, redirect, url_for, request
+from flask import Flask, render_template, redirect, url_for, request, session
 from config import Config
 from forms import LoginForm, RegisterForm
-from models import db, User
+from models import db, User, Product
 from cart_route import cart_bp
 from bookings_route import bookings_bp
 from flask_bcrypt import Bcrypt
@@ -35,6 +35,14 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
+@app.context_processor
+def inject_user_cart():
+    cart_count = 0
+    if current_user.is_authenticated and current_user.cart:
+        cart_count = sum(item.quantity for item in current_user.cart.items)
+    return dict(current_user=current_user, cart_count=cart_count)
+
+
 # Routes
 @app.route('/')
 def home_page():
@@ -45,11 +53,13 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
-        if user:
-            if bcrypt.check_password_hash(user.password, form.password.data):
-                load_user(user)
-                next_page = request.args.get('next')  # redirects to where user was going
-                return redirect(next_page) if next_page else redirect(url_for('home'))
+        if user and bcrypt.check_password_hash(user.password, form.password.data):
+            login_user(user)
+            session["user"] = user.id
+            next_page = request.args.get('next')  # redirects to where user was going
+            return redirect(next_page) if next_page else redirect(url_for('home'))
+        else:
+            return "Invalid username or password", 401
     return render_template("login.html", title="Login", form=form)
 
 @app.route('/register', methods=["GET","POST"])
@@ -67,6 +77,7 @@ def register():
 @login_required
 def logout():
     logout_user()
+    session.pop("user_id", None)
     return redirect(url_for('home_page'))
 
 @app.route("/checkout")
@@ -81,6 +92,25 @@ def base():
 @app.route("/order")
 def order():
     return render_template("order.html", title="order")
+
+@app.route("/seed_products")
+def seed_products():
+    # Only add if no products exist
+    if Product.query.count() > 0:
+        return "Products already exist."
+
+    products = [
+        Product(name="Chocolate Carrot Cake", price=250.00),
+        Product(name="Carrot Cake", price=230.00),
+        Product(name="Fraiser Cake", price=220.00),
+        Product(name="Chocolate Cake", price=220.00),
+        Product(name="Black Forest Cake", price=220.00),
+    ]
+
+    db.session.add_all(products)
+    db.session.commit()
+
+    return "5 products added successfully!"
 
 if __name__ == "__main__":
     app.run(debug=True, port=5001)

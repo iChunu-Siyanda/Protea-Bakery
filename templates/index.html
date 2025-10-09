@@ -28,13 +28,10 @@
     </div>
 </div>
 
+
 <!--modal order now-->
 <div id="popupModalOrder" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity z-50">
-
-    <div class="bg-white rounded-3xl max-h-[80vh] overflow-y-auto
-                flex flex-col md:flex-row w-11/12 max-w-4xl relative
-                transform scale-95 transition-transform duration-300">
-
+    <div class="bg-white rounded-3xl max-h-[80vh] overflow-y-auto flex flex-col md:flex-row w-11/12 max-w-4xl relative transform scale-95 transition-transform duration-300">
         <!-- Close Button -->
         <button id="closeModalOrder"
                 class="absolute top-4 right-4 text-gray-500 hover:text-gray-900 text-3xl font-bold">&times;
@@ -49,7 +46,8 @@
 
         <!-- Right Side -->
         <div class="md:w-1/2 flex flex-col justify-between">
-            <div class="flex flex-col gap-4 m-6">
+            <!-- Product content -->
+            <div class="flex flex-col gap-4 m-6 product" data-product-id="1" data-product-name="Chocolate Carrot Cake" data-product-price="250">
                 <h2 class="md:text-3xl font-cinzel font-semibold">Chocolate Carrot Cake</h2>
                 <p class="text-gray-700">
                     Detailed description, ingredients, baking process, or special offers go here.
@@ -57,37 +55,41 @@
 
                 <hr>
 
-                <div class="flex justify-between">
+                <div class="flex justify-between items-center">
                     <p class="flex items-center gap-2 text-gray-700">
                         <i class="fa-regular fa-user"></i> 8+
                     </p>
 
-                    <div class="flex flex-col justify-center"><p>R200</p></div>
+                    <div class="flex flex-col justify-center">
+                        <p>R250</p>
+                    </div>
 
-                    <div class="flex justify-between gap-3 font-bold text-xl product" data-product-id="20" data-product-name="Chocolate Carrot Cake" data-product-price="200">
+                    <!-- Quantity controls -->
+                    <div class="flex justify-between gap-3 font-bold text-xl">
                         <button class="minusBtn">-</button>
-                            <p class="w-[20px] text-center quantity">0</p>
-                        <button class="addBtn" >+</button>
+                        <p class="w-[20px] text-center quantity">0</p>
+                        <button class="addBtn">+</button>
                     </div>
                 </div>
 
                 <hr>
             </div>
 
-            <div class="flex flex-col justify-center">
-                <div class="flex justify-center">
-                    <p id="cartTotalMsg" class="text-gray-600 hidden">
-                    </p>
+            <!-- Add to Order button fixed at bottom -->
+            <div class="flex flex-col m-6">
+                <div class="flex justify-center p-3">
+                    <p id="modalTotalMsg" class="text-gray-600 hidden"></p>
                 </div>
-                <button
-                   class="bg-black text-white text-center m-6 py-3 rounded-full
-                          transition-colors duration-300 ease-in-out hover:bg-primary">
+                <button class="addToOrderBtn bg-black text-white text-center py-3 rounded-full
+                        transition-colors duration-300 ease-in-out hover:bg-primary">
                     Add To Order
                 </button>
             </div>
+
         </div>
     </div>
 </div>
+
 
 <!--modal learn more-->
 <div id="popupModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity z-50">
