@@ -1,3 +1,18 @@
+//============================== GSAP =============================================
+// GSAP Animations
+gsap.fromTo("#intro1", {y: 40, opacity: 0}, {y: 0, opacity: 1, duration: 1});
+gsap.fromTo("#intro2", {y: 40, opacity: 0}, {y: 0, opacity: 1, duration: 1});
+gsap.fromTo("#name1", {y: 40, opacity: 0}, {y: 0, opacity: 1, delay: 0.5, duration: 1});
+gsap.fromTo("#desc1", {y: 40, opacity: 0}, {y: 0, opacity: 1, delay: 1, duration: 1});
+
+gsap.fromTo("#nameProduct1", {y: 40, opacity: 0}, {y: 0, opacity: 1, delay: 0.5, duration: 1});
+gsap.fromTo("#descProduct1", {y: 40, opacity: 0}, {y: 0, opacity: 1, delay: 0.5, duration: 1});
+gsap.fromTo("#openModal", {y: 40, opacity: 0}, {y: 0, opacity: 1, delay: 0.5, duration: 1});
+gsap.fromTo("#openModalOrder", {y: 40, opacity: 0}, {y: 0, opacity: 1, delay: 0.5, duration: 1});
+
+
+
+
 //=========================== calculation =========================================
 let cart = {
     total: 0,

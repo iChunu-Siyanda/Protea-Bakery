@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <!-- Tailwind CSS v4 via CDN -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
+    <!-- GSAP via CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script>
       tailwind.config = {
         theme: {
@@ -153,6 +155,26 @@
                 </ul>
             </div>
         </nav>
+
+       <!-- Header -->
+       <div class="w-full h-64 flex">
+           <div class="bg-gray-100 text-black md:w-2/3 flex flex-col justify-start">
+               <h2 id="intro1" class="mt-4 mx-4 text-3xl sm:text-4xl font-light mb-2 opacity-0">
+                   Welcome,
+               </h2>
+           <h1 id="name1" class="mt-4 mx-4 text-5xl sm:text-6xl font-extrabold mb-4 opacity-0">
+               Siyanda Mchunu
+           </h1>
+           <p id="desc1" class="mt-4 mx-4 text-lg sm:text-xl text-gray-600 max-w-2xl mb-8 opacity-0">
+               Enjoy our premium catalog.
+           </p>
+       </div>
+       <div class="bg-black text-white md:w-1/3 flex flex-col justify-start">
+           <h2 id="intro2" class="mt-4 mx-4 text-3xl sm:text-4xl font-light mb-2 opacity-0">
+            Order
+           </h2>
+       </div>
+   </div>
    </header>
     {% endblock header %}
 

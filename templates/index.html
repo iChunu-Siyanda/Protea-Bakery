@@ -2,7 +2,7 @@
 {% block content %}
 
 <!-- Card -->
-<div class="max-w-5xl mx-auto my-10 bg-white rounded-3xl shadow-lg overflow-hidden flex flex-col md:flex-row transform transition-all duration-700 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:bg-orange-500 group">
+<div id="mainCard" class="max-w-5xl mx-auto my-10 bg-white rounded-3xl shadow-lg overflow-hidden flex flex-col md:flex-row transform transition-all duration-700 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:bg-orange-500 group">
     <!-- Image -->
     <div class="md:w-1/2 h-64 md:h-auto overflow-hidden">
         <img src="{{ url_for('static', filename='images/choc_carrot_2.jpg') }}" alt="Chocolate Carrot Cake"
@@ -11,10 +11,10 @@
 
     <!-- Text -->
     <div class="md:w-2/3 p-6 md:p-8 flex flex-col justify-center">
-        <h2 class="text-3xl md:text-5xl font-cinzel font-semibold mb-3 text-gray-900 transition-colors duration-700 ease-in-out group-hover:text-white">
+        <h2 id="nameProduct1" class="text-3xl md:text-5xl font-cinzel font-semibold mb-3 text-gray-900 transition-colors duration-700 ease-in-out group-hover:text-white">
             Chocolate Carrot Cake
         </h2>
-        <p class="text-gray-700 text-base md:text-lg leading-relaxed mb-4 transition-colors duration-700 ease-in-out group-hover:text-white">
+        <p id="descProduct1" class="text-gray-700 text-base md:text-lg leading-relaxed mb-4 transition-colors duration-700 ease-in-out group-hover:text-white">
             Moist layers of spiced carrot cake swirled with rich chocolate, finished in a way that feels both wholesome and decadent.
         </p>
         <div class="flex flex-wrap gap-3">
