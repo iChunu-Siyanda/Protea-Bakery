@@ -1,14 +1,19 @@
 from flask import Blueprint, request, jsonify, session
+from sqlalchemy.orm import joinedload
+
 from models import db, Product, Cart, CartItem
 
 cart_bp = Blueprint("cart", __name__)
 
 @cart_bp.route("/get_cart")
 def get_cart():
+    print("====get_cart=====")
     user_id = session.get("user_id")
-    cart = Cart.query.filter_by(user_id=user_id).first()
+    # cart = Cart.query.filter_by(user_id=user_id).first()
+    cart = Cart.query.options(joinedload(Cart.items).joinedload(CartItem.product)).filter_by(user_id=user_id).first()
 
     if not cart:
+        print("not cart")
         return jsonify({"items": [], "total": 0})
 
     items = [{
@@ -18,12 +23,14 @@ def get_cart():
         "quantity": item.quantity
     } for item in cart.items]
 
+    print(f"items:{items}")
     total = sum(item.quantity * item.price for item in cart.items)
     return jsonify({"items": items, "total": total})
 
 
 @cart_bp.route("/add_to_cart", methods=["POST"])
 def add_to_cart():
+    print("=========add_to_cart=========")
     data = request.json
     user_id = session.get("user_id")
 
@@ -48,7 +55,7 @@ def add_to_cart():
 
     total = sum(i.quantity * i.price for i in cart.items)
     items = [{"id": i.product_id, "name": i.product.name, "price": i.price, "quantity": i.quantity} for i in cart.items]
-
+    print(f'addToCarItems:{items}')
     return jsonify({"items": items, "total": total})
 
 
@@ -143,7 +150,46 @@ def update_cart():
         session.modified = True
 
         total = sum(i["quantity"] * i["price"] for i in cart["items"])
+        print(f"Total: {total}")
         return jsonify({"items": cart["items"], "total": total})
+
+
+
+@cart_bp.route("/remove_item", methods=["POST"])
+def remove_item():
+    data = request.json
+    product_id = data.get("productId")
+    user_id = session.get("user_id")
+
+    if not user_id or not product_id:
+        return jsonify({"error": "Missing data"}), 400
+
+    cart = Cart.query.filter_by(user_id=user_id).first()
+    if cart:
+        item = CartItem.query.filter_by(cart_id=cart.id, product_id=product_id).first()
+        if item:
+            db.session.delete(item)
+            db.session.commit()
+
+    # Return updated cart
+    items = [{"id": i.product_id, "name": i.product.name, "price": i.price, "quantity": i.quantity} for i in cart.items] if cart else []
+    total = sum(i.quantity * i.price for i in cart.items) if cart else 0
+    return jsonify({"items": items, "total": total})
+
+
+@cart_bp.route("/clear_cart", methods=["POST"])
+def clear_cart():
+    user_id = session.get("user_id")
+    if not user_id:
+        return jsonify({"error": "Not logged in"}), 401
+
+    cart = Cart.query.filter_by(user_id=user_id).first()
+    if cart:
+        CartItem.query.filter_by(cart_id=cart.id).delete()
+        db.session.commit()
+
+    return jsonify({"items": [], "total": 0})
+
 
 
 # @cart_bp.route("/get_products")

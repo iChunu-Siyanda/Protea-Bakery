@@ -1,5 +1,4 @@
-//============================== GSAP =============================================
-// GSAP Animations
+//==========================  GSAP Animation ========================================
 gsap.fromTo("#intro1", {y: 40, opacity: 0}, {y: 0, opacity: 1, duration: 1});
 gsap.fromTo("#intro2", {y: 40, opacity: 0}, {y: 0, opacity: 1, duration: 1});
 gsap.fromTo("#name1", {y: 40, opacity: 0}, {y: 0, opacity: 1, delay: 0.5, duration: 1});
@@ -14,10 +13,10 @@ gsap.fromTo("#openModalOrder", {y: 40, opacity: 0}, {y: 0, opacity: 1, delay: 0.
 
 
 //=========================== calculation =========================================
-let cart = {
-    total: 0,
-    products: {}
-};
+//let cart = {
+//    total: 0,
+//    products: {}
+//};
 
 // Renders the cart items inside the cart modal and syn with order page
 function renderCart(cart) {
@@ -32,7 +31,7 @@ function renderCart(cart) {
     cart.items.forEach(item => {
         count += item.quantity;
 
-        // Main container for each cart item
+        // Container for each cart item
         const itemDiv = document.createElement("div");
         itemDiv.className = "rounded-xl border flex items-center justify-between p-3 mb-3 bg-gray-50";
 
@@ -92,6 +91,129 @@ function renderCart(cart) {
     if (cartCountEl) cartCountEl.innerText = count;
 }
 
+function renderOrderPage(cart) {
+    console.log("Render")
+    const orderContainer = document.getElementById("orderItems");
+    if (!orderContainer) {
+        console.error("No #orderItems found in DOM");
+        return;
+    }
+
+    console.log("renderOrderPage")
+
+    orderContainer.innerHTML = "";
+    console.log(cart.items);
+    if (!cart.items || cart.items.length === 0) {
+        orderContainer.innerHTML = `<p class="text-center text-gray-500 mt-4">Your cart is empty.</p>`;
+        return;
+    }
+
+    cart.items.forEach(item => {
+        // Outer container
+        const productCard = document.createElement("div");
+        productCard.className = "w-full max-w-5xl rounded-xl border flex justify-between mx-auto bg-white mb-4 p-3";
+
+        // Left: image + name
+        const leftDiv = document.createElement("div");
+        leftDiv.className = "flex items-center space-x-3";
+
+        const imgDiv = document.createElement("div");
+        imgDiv.className = "w-24 h-24 overflow-hidden rounded-lg";
+        imgDiv.innerHTML = `<img src="/static/images/choc_carrot_2.jpg" alt="${item.name}" class="w-full h-full object-cover">`;
+
+        const nameDiv = document.createElement("div");
+        nameDiv.innerHTML = `<p class="text-lg font-semibold text-gray-900">${item.name}</p>`;
+        console.log(`Name: ${item.name}`);
+
+        leftDiv.appendChild(imgDiv);
+        leftDiv.appendChild(nameDiv);
+
+        // Right: qty + price
+        const rightDiv = document.createElement("div");
+        rightDiv.className = "flex items-center space-x-4";
+
+        //delete/clear buttons
+        const removeBtn = document.createElement("button");
+        removeBtn.textContent = "Remove";
+        removeBtn.className = "px-2 py-1 bg-red-500 text-white rounded";
+        removeBtn.addEventListener("click", () => removeItem(item.id));
+
+        const clearBtn = document.createElement("button");
+        clearBtn.textContent = "Clear Cart";
+        clearBtn.className = "px-4 py-2 bg-gray-700 text-white rounded mt-4";
+        clearBtn.addEventListener("click", clearCart);
+
+        rightDiv.appendChild(removeBtn);
+        orderContainer.appendChild(clearBtn);
+
+        // Quantity controls
+        const qtyDiv = document.createElement("div");
+        qtyDiv.className = "flex items-center space-x-2";
+
+        const minusBtn = document.createElement("button");
+        minusBtn.textContent = "−";
+        minusBtn.className = "px-2 py-1 bg-gray-200 rounded";
+        minusBtn.addEventListener("click", () => updateQty(item.id, item.quantity - 1));
+
+        const qtyText = document.createElement("span");
+        qtyText.textContent = item.quantity;
+        qtyText.className = "w-6 text-center";
+
+        const plusBtn = document.createElement("button");
+        plusBtn.textContent = "+";
+        plusBtn.className = "px-2 py-1 bg-gray-200 rounded";
+        plusBtn.addEventListener("click", () => updateQty(item.id, item.quantity + 1));
+
+        qtyDiv.appendChild(minusBtn);
+        qtyDiv.appendChild(qtyText);
+        qtyDiv.appendChild(plusBtn);
+
+        // Price
+        const priceDiv = document.createElement("div");
+        priceDiv.textContent = `R${(item.price * item.quantity).toFixed(2)}`;
+        priceDiv.className = "font-semibold";
+
+        rightDiv.appendChild(qtyDiv);
+        rightDiv.appendChild(priceDiv);
+
+        // Combine
+        productCard.appendChild(leftDiv);
+        productCard.appendChild(rightDiv);
+
+        orderContainer.appendChild(productCard);
+    });
+
+    // Total
+    const totalDiv = document.createElement("div");
+    totalDiv.className = "flex justify-between items-center w-full max-w-5xl mx-auto p-3 mt-4 border rounded-xl bg-white";
+    totalDiv.innerHTML = `
+        <span class="font-medium text-gray-700">Total:</span>
+        <span class="font-bold text-xl">R${cart.total.toFixed(2)}</span>
+    `;
+    orderContainer.appendChild(totalDiv);
+}
+
+function removeItem(productId) {
+    fetch("/remove_item", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId })
+    })
+    .then(res => res.json())
+    .then(handleCartUpdate)
+    .catch(err => console.error("Failed to remove item:", err));
+}
+
+//function clearCart() {
+//    fetch("/clear_cart", {
+//        method: "POST",
+//        headers: { "Content-Type": "application/json" }
+//    })
+//    .then(res => res.json())
+//    .then(handleCartUpdate)}
+//    .catch(err => console.error("Failed to clear cart:", err));
+//}
+
 function syncOrderPage(cart) {
     let total = 0;
 
@@ -109,7 +231,16 @@ function syncOrderPage(cart) {
     if (totalEl) totalEl.textContent = total.toFixed(2);
 }
 
-// Calls update_cart on backend to set qty for a product, then re-renders modal
+function handleCartUpdate(cart) {
+  renderCart(cart);
+  const orderContainer = document.getElementById("orderItems");
+  if (orderContainer) {
+    renderOrderPage(cart);
+  }
+  showModalMessage("Item added to cart!");
+}
+
+// Calls update_cart on backend to set quantity for a product, then re-renders modal
 function updateQty(productId, quantity) {
     fetch("/update_cart", {
         method: "POST",
@@ -117,25 +248,19 @@ function updateQty(productId, quantity) {
         body: JSON.stringify({ productId, quantity })
     })
     .then(res => res.json())
-    .then(cart => {
-        renderCart(cart),
-        syncOrderPage(cart)
-    })
+    .then(handleCartUpdate)
     .catch(err => console.error("Update failed:", err));
 }
 
-// Adds product (or sets qty) via same backend endpoint and refreshes modal
+// Adds product (or sets quantity) via same backend endpoint and refreshes modal
 function addToCart(productId, quantity=1) {
-    fetch("/update_cart", {
+    fetch("/add_to_cart", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ productId, quantity})
     })
     .then(res => res.json())
-    .then(cart => {
-        renderCart(cart);
-        showModalMessage("Item added to cart!");
-    })
+    .then(handleCartUpdate)
     .catch(err => console.error("Add to cart failed:", err));
 }
 
@@ -160,12 +285,10 @@ function initProductControls() {
         const addBtn = productDiv.querySelector(".addBtn");
         const minusBtn = productDiv.querySelector(".minusBtn");
 
-        // msg element below the add button (single element in modal)
+        // msg below the add button
         const msg = document.getElementById("modalTotalMsg");
-
-        // Add-to-order button sits outside .product in your layout
+        // Add-to-order button
         const addToCartBtn = productDiv.parentElement.querySelector(".addToOrderBtn");
-
         // read initial quantity if present
         let quantity = parseInt(qtyEl.textContent) || 0;
 
@@ -177,27 +300,28 @@ function initProductControls() {
             totalPrice: 0,
         };
 
-        // Increase quantity UI + show per-product total
+        // Increase quantity
         addBtn.addEventListener("click", () => {
             quantity++;
             qtyEl.textContent = quantity;
             item.totalPrice = (quantity * productPrice).toFixed(2);
             console.log(item.totalPrice, item);
 
-            // show product-specific total in modal
+            //Subtotal
             if (msg) {
                 msg.innerHTML = `Total: R${(quantity * productPrice).toFixed(2)}`;
                 msg.classList.remove("hidden");
             }
         });
 
-        // Decrease quantity UI + update per-product total or hide message
+        // Decrease quantity
         minusBtn.addEventListener("click", () => {
             if (quantity > 0) quantity--;
             qtyEl.textContent = quantity;
             item.totalPrice = (quantity * productPrice).toFixed(2);
             console.log(item.totalPrice, item);
 
+            //Subtotal
             if (msg) {
                 if (quantity > 0) {
                     msg.innerHTML = `Total: R${(quantity * productPrice).toFixed(2)}`;
@@ -208,13 +332,12 @@ function initProductControls() {
             }
         });
 
-        // Add To Order: send the chosen quantity to backend and refresh modal cart
+        // Add To Order: sends to backend and refresh modal cart
         if (addToCartBtn) {
             addToCartBtn.addEventListener("click", () => {
                 console.log("Sending to backend:", {productId, quantity });
 
                 if (!quantity || quantity <= 0) {
-                    // show helpful message in same place
                     if (msg) {
                         msg.innerHTML = "Please select an item before adding to order.";
                         msg.classList.remove("hidden");
@@ -222,26 +345,61 @@ function initProductControls() {
                     return;
                 }
 
-                // send qty to server (this uses your update_cart route)
+                //Add to cart
+                console.log("ADD TO CART 2");
+                addProductToCart(productId, productName, productPrice, quantity);
+
+                // Sends quantity to server(update_cart route)
                 addToCart(productId, quantity);
 
-                // reset UI quantity and hide product message
+                // Reset UI quantity
+                console.log(cart);
+                console.log("Next");
                 quantity = 0;
                 qtyEl.textContent = "0";
                 if (msg) msg.classList.add("hidden");
+                console.log(cart);
             });
         }
     });
 }
 
+//Add to cart
+function addProductToCart(productId, productName, productPrice, qtyEl) {
+    if (!cart.products[productId]) {
+        cart.products[productId] = {
+            id: productId,
+            name: productName,
+            price: productPrice,
+            Qty: qtyEl,
+            totalPrice: productPrice * qtyEl
+        };
+        cart.total += (productPrice * qtyEl);
+        console.log("ADD TO CART 0", cart);
+    } else {
+        console.log("ADD TO CART 1");
+        cart.products[productId].Qty += qtyEl;
+        cart.products[productId].totalPrice = cart.products[productId].price * cart.products[productId].Qty;
+    }
+
+    // Recalculate the total cart price
+    updateCartTotal();
+}
+
+function updateCartTotal() {
+  let total = 0;
+  for (const productId in cart.products) {
+    total += cart.products[productId].totalPrice;
+  }
+  cart.total = total;
+}
+
+
 // Load current cart from server (used on page load and could be called when opening modal)
 function loadCartAndRender() {
     fetch("/get_cart")
         .then(res => res.json())
-        .then(cart => {
-            renderCart(cart),
-            syncOrderPage(cart)
-        })
+        .then(handleCartUpdate)
         .catch(err => console.error("Error loading cart:", err));
 }
 
@@ -260,88 +418,6 @@ const cartModal = document.getElementById("cartModal");
 cartBtn.addEventListener("click", () => {
     cartModal.classList.toggle("translate-x-full");
 });
-
-//// Render cart items inside modal (if you want to show added items)
-//function renderCart(cart) {
-//    const cartItemsDiv = document.getElementById("cartItems");
-//    const cartTotalEl = document.getElementById("cartTotalModal");
-//    if (!cartItemsDiv) return;
-//
-//    cartItemsDiv.innerHTML = "";
-//    let count = 0;
-//
-//    cart.items.forEach(item => {
-//        count += item.qty;
-//        const itemDiv = document.createElement("div");
-//        itemDiv.className = "flex justify-between items-center bg-gray-100 p-2 rounded-lg";
-//
-//        const itemInfo = document.createElement("div");
-//        itemInfo.innerHTML = `<p class="font-medium text-gray-800">${item.name}</p>
-//                              <p class="text-sm text-gray-600">R${item.price} x ${item.qty}</p>`;
-//
-//        const qtyControls = document.createElement("div");
-//        qtyControls.className = "flex items-center space-x-2";
-//
-//        const minusBtn = document.createElement("button");
-//        minusBtn.className = "px-2 bg-red-500 text-white rounded";
-//        minusBtn.textContent = "-";
-//        minusBtn.addEventListener("click", () => updateQty(item.id, item.qty - 1));
-//
-//        const qtySpan = document.createElement("span");
-//        qtySpan.textContent = item.qty;
-//
-//        const plusBtn = document.createElement("button");
-//        plusBtn.className = "px-2 bg-green-500 text-white rounded";
-//        plusBtn.textContent = "+";
-//        plusBtn.addEventListener("click", () => updateQty(item.id, item.qty + 1));
-//
-//        qtyControls.appendChild(minusBtn);
-//        qtyControls.appendChild(qtySpan);
-//        qtyControls.appendChild(plusBtn);
-//
-//        itemDiv.appendChild(itemInfo);
-//        itemDiv.appendChild(qtyControls);
-//
-//        cartItemsDiv.appendChild(itemDiv);
-//    });
-//
-//    if (cartTotalEl) cartTotalEl.innerText = `R${cart.total}`;
-//}
-//
-//// Add product to cart
-//function addToCart(productId) {
-//    fetch("/add_to_cart", {
-//        method: "POST",
-//        headers: { "Content-Type": "application/json" },
-//        body: JSON.stringify({ productId })
-//    })
-//    .then(res => res.json())
-//    .then(cart => {
-//        renderCart(cart); // update cart modal
-//    });
-//}
-//
-//// Update quantity of a product
-//function updateQty(productId, qty) {
-//    fetch("/update_cart", {
-//        method: "POST",
-//        headers: { "Content-Type": "application/json" },
-//        body: JSON.stringify({ productId, qty })
-//    })
-//    .then(res => res.json())
-//    .then(cart => {
-//        renderCart(cart); // update cart modal
-//    });
-//}
-//
-//// Load cart and initialize controls on page load
-//window.addEventListener("DOMContentLoaded", () => {
-//    fetch("/get_cart")
-//        .then(res => res.json())
-//        .then(cart => renderCart(cart));
-//
-//    initProductControls();
-//});
 
 
 

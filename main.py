@@ -42,6 +42,21 @@ def inject_user_cart():
         cart_count = sum(item.quantity for item in current_user.cart.items)
     return dict(current_user=current_user, cart_count=cart_count)
 
+@app.context_processor
+def inject_cart():
+    # Use session cart for guests, or database cart for logged-in users
+    user_id = session.get("user_id")
+    if user_id:
+        from models import Cart  # import inside to avoid circular imports
+        cart = Cart.query.filter_by(user_id=user_id).first()
+        if cart:
+            items = [{"id": i.product_id, "name": i.product.name, "price": i.price, "quantity": i.quantity} for i in cart.items]
+            total = sum(i.quantity * i.price for i in cart.items)
+            return {"cart": {"items": items, "total": total}}
+    # fallback for guest
+    return {"cart": session.get("cart", {"items": [], "total": 0})}
+
+
 
 # Routes
 @app.route('/')
