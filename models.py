@@ -12,7 +12,7 @@ class User(db.Model, UserMixin):
 
     def __init__(self, username, password):
         self.username = username
-        self.password = password
+        self.password_hash = password
     
 class Booking(db.Model):
     id = db.Column(db.Integer, primary_key=True)

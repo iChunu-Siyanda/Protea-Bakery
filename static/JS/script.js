@@ -13,10 +13,10 @@ gsap.fromTo("#openModalOrder", {y: 40, opacity: 0}, {y: 0, opacity: 1, delay: 0.
 
 
 //=========================== calculation =========================================
-//let cart = {
-//    total: 0,
-//    products: {}
-//};
+let cart = {
+    total: 0,
+    products: {}
+};
 
 // Renders the cart items inside the cart modal and syn with order page
 function renderCart(cart) {
@@ -347,10 +347,11 @@ function initProductControls() {
 
                 //Add to cart
                 console.log("ADD TO CART 2");
-                addProductToCart(productId, productName, productPrice, quantity);
 
                 // Sends quantity to server(update_cart route)
                 addToCart(productId, quantity);
+
+                addProductToCart(productId, productName, productPrice, quantity);
 
                 // Reset UI quantity
                 console.log(cart);
