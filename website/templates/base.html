@@ -73,7 +73,7 @@
                     </div>
 
                     <div class="flex justify-center">
-                        <a href="{{ url_for('order') }}"
+                        <a href="{{ url_for('main.order') }}"
                         class="w-full mt-4 bg-black text-white text-center py-2 rounded-xl hover:bg-primary transition">
                             See Your Order
                         </a>
@@ -100,7 +100,7 @@
                     <li><a href="/catering" class="hover:text-primary transition-colors">Catering</a></li>
                     <li><a href="/about" class="hover:text-primary transition-colors">About</a></li>
                     {% if current_user.username %}
-                    <li><a href="url_for('logout')" class="hover:text-primary transition-colors">Logout</a></li>
+                    <li><a href="url_for('auth.logout')" class="hover:text-primary transition-colors">Logout</a></li>
                     {% endif %}
                     <li>
                         <div class="flex justify-between">
@@ -137,7 +137,7 @@
            </div>
        </div>
    </header>
-    {% endblock header %}
+    {% endblock %}
 
     <main class="max-w-7xl mx-auto px-4 mt-10">
         {% block content %}
@@ -162,8 +162,10 @@
         </div>
 
     </footer>
-    {% endblock footer %}
+    {% endblock %}
+
 
     <script src="{{ url_for('static', filename='JS/script.js') }}"></script>
+
 </body>
 </html>

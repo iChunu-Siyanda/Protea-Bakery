@@ -1,7 +1,8 @@
 from flask import Blueprint,request, redirect, url_for, flash
-from models import Booking, db
 from datetime import datetime
 from flask_login import current_user, login_required
+from website import db
+from website.models import Booking
 
 bookings_bp = Blueprint('bookings', __name__, template_folder='templates')
 
