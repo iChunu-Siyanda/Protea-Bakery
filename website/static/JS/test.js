@@ -1,76 +1,4 @@
 // Renders the cart items inside the cart modal and syn with order page
-function renderCart(cart) {
-    const cartItemsDiv = document.getElementById("cartItems");
-    const cartTotalEl = document.getElementById("cartTotalModal");
-    const cartCountEl = document.getElementById("cartCount");
-    if (!cartItemsDiv) return;
-
-    cartItemsDiv.innerHTML = "";
-    let count = 0;
-    console.log(`renderCart: `)
-    cart.items.forEach(item => {
-        count += item.quantity;
-
-        const itemDiv = document.createElement("div");
-        itemDiv.className = "rounded-xl border flex items-center justify-between p-3 mb-3 bg-gray-50";
-
-        // Left section: image + name + price
-        const itemInfo = document.createElement("div");
-        itemInfo.className = "flex items-center space-x-3";
-
-        const imgDiv = document.createElement("div");
-        imgDiv.className = "w-20 h-20 overflow-hidden rounded-lg";
-        imgDiv.innerHTML = `<img src="/static/images/choc_carrot_2.jpg" alt="${item.name}" class="w-full h-full object-cover">`;
-
-        const nameDiv = document.createElement("div");
-        const subtotal = (item.price * item.quantity).toFixed(2);
-        nameDiv.innerHTML = `
-            <p class="text-base font-semibold text-gray-900">${item.name}</p>
-            <p class="text-sm text-gray-600">R${item.price} × ${item.quantity}</p>
-            <p class="text-sm font-medium text-gray-800 mt-1">Subtotal: <span class="text-black">R${subtotal}</span></p>
-        `;
-
-        itemInfo.appendChild(imgDiv);
-        itemInfo.appendChild(nameDiv);
-
-        // Quantity controls
-        const qtyControls = document.createElement("div");
-        qtyControls.className = "border rounded-full bg-white flex items-center space-x-3 px-3 py-1";
-
-        const minusBtn = document.createElement("button");
-        minusBtn.className = "px-2 text-black text-lg";
-        minusBtn.textContent = "−";
-        minusBtn.addEventListener("click", () => {
-            const newQty = Math.max(0, item.quantity - 1);
-            console.log("Minus clicked for product_id:", item.product_id, "newQty:", newQty)
-            updateQty(item.product_id, newQty);
-        });
-
-        const qtySpan = document.createElement("span");
-        qtySpan.textContent = item.quantity;
-
-        const plusBtn = document.createElement("button");
-        plusBtn.className = "px-2 text-black text-lg";
-        plusBtn.textContent = "+";
-        plusBtn.addEventListener("click", () => {
-            const newQty = item.quantity + 1;
-            console.log("Plus clicked for product_id:", item.product_id, "newQty:", newQty)
-            updateQty(item.product_id, newQty);
-        });
-
-        qtyControls.appendChild(minusBtn);
-        qtyControls.appendChild(qtySpan);
-        qtyControls.appendChild(plusBtn);
-
-        itemDiv.appendChild(itemInfo);
-        itemDiv.appendChild(qtyControls);
-        cartItemsDiv.appendChild(itemDiv);
-    });
-
-    if (cartTotalEl) cartTotalEl.innerText = `R${cart.total.toFixed(2)}`;
-    if (cartCountEl) cartCountEl.innerText = count;
-}
-
 function syncOrderPage(cart) {
     let total = 0;
 
@@ -211,31 +139,210 @@ function clearCart() {
     .catch(err => console.error("Failed to clear cart:", err));
 }
 
+//Add to cart
+function addProductToCart(product_id, product_name, price, qtyEl) {
+    console.log('======= addProductToCart =======')
+    if (!cart.products[product_id]) {
+        cart.products[productId] = {
+            id: product_id,
+            name: product_name,
+            price: price,
+            Qty: qtyEl,
+            totalPrice: productPrice * qtyEl
+        };
+        cart.total += (productPrice * qtyEl);
+        console.log("ADD TO NEW CART", cart);
+    } else {
+        console.log("ADD TO EXISTING CART");
+        cart.products[productId].Qty += qtyEl;
+        console.log(`Cart.products[productId].Qty: ${cart.products[productId].Qty}`)
+        cart.products[productId].totalPrice = cart.products[productId].price * cart.products[productId].Qty;
+    }
+
+    // Recalculate the total cart price
+    updateCartTotal();
+}
+function updateCartTotal() {
+    let total = 0;
+    for (const productId in cart.products) {
+        total += cart.products[product_id].totalPrice;
+    }
+    cart.total = total;
+}
+
 function handleCartUpdate(cart) {
-//    if (!data || !data.items) {
-//        console.error("Invalid cart data:", data);
-//        return;
-//    }
-    renderCart(cart);
-//    const orderContainer = document.getElementById("orderItems");
-//    if (orderContainer) {
-//        renderOrderPage(cart);
-//    }
+    const cartCountElement = document.getElementById("cartCount");
+        if (cartCountElement && data.cart_count !== undefined) {
+            cartCountElement.textContent = data.cart_count;
+            cartCountElement.classList.add("animate-bounce");
+            setTimeout(() => cartCountElement.classList.remove("animate-bounce"), 500);
+        }
     showModalMessage("Item added to cart!");
 }
 
-// Calls update_cart on backend to set quantity for a product, then re-renders modal
-function updateQty(productId, quantity) {
-    console.log("UpdateQty sending update:", { productId, quantity });
-    fetch("/update_cart", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId, quantity })
-    })
-    .then(res => {
-        if (!res.ok) throw new Error("Bad response from server");
-        return res.json();
-    })
-    .then(handleCartUpdate)
-    .catch(err => console.error("Update failed:", err));
-}
+
+ if user_id:
+        print("Logged In User")
+        cart = Cart.query.filter_by(user_id=user_id).first()
+        if not cart:
+            cart = Cart(user_id=user_id)
+            db.session.add(cart)
+            db.session.commit()
+
+        item = CartItem.query.filter_by(cart_id=cart.id, product_id=product.id).first()
+
+        if item:
+            item.quantity = quantity
+            if item.quantity <= 0:
+                db.session.delete(item)
+        else:
+            if quantity > 0:
+                item = CartItem(
+                    cart_id=cart.id,
+                    product_id=product.id,
+                    quantity=quantity,
+                    price=product.price
+                )
+                db.session.add(item)
+
+        db.session.commit()
+
+        total = sum(i.quantity * i.price for i in cart.items)
+        items = [
+            {"id": i.product_id, "name": i.product.name, "price": i.price, "quantity": i.quantity}
+            for i in cart.items
+        ]
+
+        return jsonify({"items": items, "total": total})
+
+//User
+@cart_bp.route('/plus_cart')
+def plus_cart():
+    user_id = session.get("user_id")
+    cart_id = request.args.get('cart_id')
+
+    # CASE 1: Logged-in user
+    if user_id:
+        cart_item = CartItem.query.get(cart_id)
+        if not cart_item:
+            return jsonify({"error": "Cart item not found"}), 404
+
+        # Increase quantity
+        cart_item.quantity += 1
+        db.session.commit()
+
+        # Get all items for this user's cart
+        cart_items = CartItem.query.filter_by(cart_id=cart_item.cart_id).all()
+        amount = sum(item.product.price * item.quantity for item in cart_items)
+
+        data = {
+            "quantity": cart_item.quantity,
+            "total": amount
+        }
+        return jsonify(data), 200
+
+    #Guest(session cart)
+    else:
+        if "cart" not in session:
+            session["cart"] = {"items": [], "total": 0}
+
+        cart = session["cart"]
+        found = False
+
+        # Try to find item in session cart
+        for item in cart["items"]:
+            if str(item["id"]) == str(cart_id):
+                item["quantity"] += 1
+                found = True
+                break
+
+        # If item not found, add it
+        if not found:
+            product = Product.query.get(cart_id)
+            if not product:
+                return jsonify({"error": "Product not found"}), 404
+
+            cart["items"].append({
+                "id": product.id,
+                "name": product.name,
+                "price": product.price,
+                "quantity": 1
+            })
+
+        # Recalculate total
+        cart["total"] = sum(i["price"] * i["quantity"] for i in cart["items"])
+        session["cart"] = cart  # Save back to session
+
+        # Get updated quantity
+        quantity = next(i["quantity"] for i in cart["items"] if str(i["id"]) == str(cart_id))
+
+        return jsonify({
+            "quantity": quantity,
+            "total": cart["total"]
+        })
+
+
+@cart_bp.route('/minus_cart')
+def minus_cart():
+    user_id = session.get("user_id")
+    cart_id = request.args.get('cart_id')
+
+    # CASE 1: Logged-in user
+    if user_id:
+        cart_item = CartItem.query.get(cart_id)
+        if not cart_item:
+            return jsonify({"error": "Cart item not found"}), 404
+
+        # Increase quantity
+        cart_item.quantity -= 1
+        db.session.commit()
+
+        # Get all items for this user's cart
+        cart_items = CartItem.query.filter_by(cart_id=cart_item.cart_id).all()
+        amount = sum(item.product.price * item.quantity for item in cart_items)
+
+        data = {
+            "quantity": cart_item.quantity,
+            "total": amount
+        }
+        return jsonify(data), 200
+
+    # Guest(session cart)
+    else:
+        if "cart" not in session:
+            session["cart"] = {"items": [], "total": 0}
+
+        cart = session["cart"]
+        found = False
+
+        # Try to find item in session cart
+        for item in cart["items"]:
+            if str(item["id"]) == str(cart_id):
+                item["quantity"] -= 1
+                found = True
+                break
+
+        # If item not found, add it
+        if not found:
+            product = Product.query.get(cart_id)
+            if not product:
+                return jsonify({"error": "Product not found"}), 404
+
+            cart["items"].append({
+                "id": product.id,
+                "name": product.name,
+                "price": product.price,
+                "quantity": 1
+            })
+
+        # Recalculate total
+        cart["total"] = sum(i["price"] * i["quantity"] for i in cart["items"])
+        session["cart"] = cart  # Save back to session
+
+        # Get updated quantity
+        quantity = next(i["quantity"] for i in cart["items"] if str(i["id"]) == str(cart_id))
+
+        return jsonify({
+            "quantity": quantity,
+            "total": cart["total"]
+        })
