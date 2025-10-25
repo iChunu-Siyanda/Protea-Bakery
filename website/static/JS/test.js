@@ -1,3 +1,26 @@
+ const totalDiv = document.createElement("div");
+    totalDiv.className =
+        "border border-black rounded-xl flex justify-between items-center mt-4 p-2 w-[200px] mx-auto bg-white";
+    totalDiv.innerHTML = `
+        <span class="font-medium text-gray-700">Total:</span>
+        <span class="font-bold text-xl">R${data.total.toFixed(2)}</span>
+    `;
+    orderPage.appendChild(totalDiv);
+
+data.total.forEach(item => {
+        let totalDiv = document.createElement("div");
+
+        if (!totalDiv){
+            totalDiv.className = "border border-black rounded-xl flex justify-between items-center mt-4 p-2 w-[200px] mx-auto bg-white";
+            orderPage.appendChild(totalDiv);
+        } else{
+            totalDiv.innerHTML = `
+                <span class="font-medium text-gray-700">Total:</span>
+                <span class="font-bold text-xl">R${item.toFixed(2)}</span>
+            `;
+        }
+    })
+
 // Renders the cart items inside the cart modal and syn with order page
 function syncOrderPage(cart) {
     let total = 0;

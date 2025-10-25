@@ -11,8 +11,6 @@ gsap.fromTo("#openModalOrder", {y: 40, opacity: 0}, {y: 0, opacity: 1, delay: 0.
 
 
 //=========================== calculation =========================================
-//cart = {"items": [], "total": 0, "cart_count": 0}
-
 //--------------------------- Add To Cart -----------------------------------------
 // Adds product (or sets quantity) via same backend endpoint and refreshes modal
 function addToCart(product_id, quantity=0, action) {
@@ -222,23 +220,31 @@ function renderOrderCart(data) {
     console.log("renderOrderPage");
 
     const orderPage = document.getElementById("orderPage");
-    const cartTotalEl = document.getElementById("cartTotalModal");
-    const cartCountEl = document.getElementById("cartCount");
     const productCard = document.getElementById("orderItems");
+    const centerTotal = document.getElementById("orderCenterTotal");
 
-    if (!productCard) {
-        console.error("No #orderItems found in DOM");
-        return;
-    }
+    if (!productCard) return;
+
 
     // Clear old content
     productCard.innerHTML = "";
 
+    // Total
+    centerTotal.innerHTML = `R${data.total.toFixed(2)}`;
+
     // Handle empty cart
     if (!data.items || data.items.length === 0) {
-        productCard.innerHTML = `<p class="text-center text-gray-500 mt-4">Your cart is empty.</p>`;
-        return;
-    }
+    orderPage.innerHTML = `
+        <div class="flex items-center justify-center min-h-screen">
+            <div class="text-center">
+                <h2 class="text-2xl font-semibold text-gray-700">Your Cart Is Empty</h2>
+                <p class="text-gray-500">Start shopping to add items to your cart!</p>
+            </div>
+        </div>
+    `;
+    return;
+}
+
 
     let count = 0;
 
@@ -293,7 +299,7 @@ function renderOrderCart(data) {
 
         // Minus button
         const minusBtn = document.createElement("button");
-        minusBtn.className = "px-2 text-black text-lg";
+        minusBtn.className = "px-1 text-black text-lg";
         minusBtn.textContent = "−";
         minusBtn.addEventListener("click", () => {
             console.log("Minus clicked for product_id:", item.product_id);
@@ -306,7 +312,7 @@ function renderOrderCart(data) {
 
         // Plus button
         const plusBtn = document.createElement("button");
-        plusBtn.className = "px-2 text-black text-lg";
+        plusBtn.className = "px-1 text-black text-lg";
         plusBtn.textContent = "+";
         plusBtn.addEventListener("click", () => {
             console.log("Add clicked for product_id:", item.product_id);
@@ -321,7 +327,7 @@ function renderOrderCart(data) {
 
         // Subtotal
         const subTotal = document.createElement("div");
-        subTotal.className = "border rounded-full py-2 px-4 flex flex-col justify-center";
+        subTotal.className = "border rounded-full py-2 px-3 flex flex-col justify-center";
         subTotal.innerHTML = `<p>R${orderSubtotal}</p>`;
         orderProducts.appendChild(subTotal);
 
@@ -329,19 +335,6 @@ function renderOrderCart(data) {
         productCard.appendChild(orderProducts);
     });
 
-    // ------------- Total ---------------
-    const totalDiv = document.createElement("div");
-    totalDiv.className =
-        "border border-black rounded-xl flex justify-between items-center mt-4 p-2 w-[200px] mx-auto bg-white";
-    totalDiv.innerHTML = `
-        <span class="font-medium text-gray-700">Total:</span>
-        <span class="font-bold text-xl">R${data.total.toFixed(2)}</span>
-    `;
-    orderPage.appendChild(totalDiv);
-
-    // Update cart UI totals
-    if (cartTotalEl) cartTotalEl.innerText = `R${data.total.toFixed(2)}`;
-    if (cartCountEl) cartCountEl.innerText = count;
 }
 
 
@@ -369,7 +362,10 @@ function updateQty(product_id, quantity, action) {
 function loadCartAndRender() {
     fetch("/get_cart")
         .then(res => res.json())
-        .then(data => {renderCart(data), renderOrderCart(data)})
+        .then(data => {
+            renderCart(data);
+            renderOrderCart(data);
+        })
         .catch(err => console.error("Error loading cart:", err));
 }
 

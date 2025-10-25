@@ -15,8 +15,9 @@ def inject_global_data():
     cart = session["cart"]
     cart_count = sum(item["quantity"] for item in cart["items"])
     cart["total_quantity"] = cart_count
+    cart_total = cart["total"]
     session.modified = True
-    return dict(cart_count=cart_count, cart=session['cart'])
+    return dict(cart_count=cart_count, cart=session['cart'], cart_total=cart_total)
 
 @main_bp.route('/')
 def home_page():
